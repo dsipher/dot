@@ -1,0 +1,72 @@
+# If you chose to add the intelligent search to ~/.inputrc,
+# also add the following line at the beginning of the file
+# to avoid strange behavior.
+# https://wiki.archlinux.org/title/Readline
+
+$include /etc/inputrc
+
+# Use vi style editing as readline default instead of emacs
+set editing-mode vi
+
+#$if mode=vi
+#set keymap vi-command
+# In vi-command mode
+#Control-l: clear-screen
+## In vi-insert mode
+#set keymap vi-command
+#Control-l: clear-screen
+#$endif
+
+# Intelligent history search cf. top of file.
+#"\e[A": history-search-backward
+#"\e[B": history-search-forward
+
+# No bell on tab-completion
+set bell-style none
+#set enable-bracketed-paste on
+
+set keymap vi
+
+# Allow UTF-8 input/output, instead of showing unicodes $'|0123|0456'
+#set input-meta on
+#set output-meta on
+#set convert-meta off
+
+# set meta-flag on
+
+## Completion
+
+# Make completion case-insensitiv
+set completion-ignore-case on
+
+# Show all matches if multiple cases are possible
+set show-all-if-ambiguous on
+
+# Add a trailing slash if autocompleting symlinks to directory
+set mark-symlinked-directories on
+
+# Dont autocomplete hidden files unless already typed a dot
+#set match-hidden-files off
+
+# Show all autocomplete results at once
+set page-completions off
+
+# Amount of possible completions before asking
+set completion-query-items 200
+
+# Color files by type
+# May cause completion text to blink in some terminals
+#set colored-stats on
+
+# Append char to indicate type (like ls -F)
+#set visible-stats on
+
+# Mark symlinked directories
+#set mark-symlinked-directories on
+
+# Color the common prefix
+#set colored-completion-prefix on
+
+# Color the common prefix in menu-complete
+#set menu-complete-display-prefix on
+

@@ -1,0 +1,316 @@
+" designed for vim 8+
+
+if has("eval")                               " vim-tiny lacks 'eval'
+  let skip_defaults_vim = 1
+endif
+
+set nocompatible
+
+"------------------------------------------------
+" Vi Compatible (~/.exrc)
+
+
+" Automatically indent new lines:
+set autoindent
+
+" Automatically write files on change when multiple files open:
+set autowrite
+
+" Activate line numbers
+"set number
+
+" Last row:
+set ruler
+
+" Shows active mode last row
+set showmode
+
+" Number of spaces a tab counts for:
+" (not indenting in spaces yet)
+set tabstop=2
+
+"------------------------------------------------
+
+" Here because plugins and stuff need it
+if has("syntax")
+  syntax enable
+endif
+
+" Allow sensing of filetype,plugin,indent,etc.
+filetype plugin indent on
+
+colorscheme duo
+
+highlight Visual term=reverse cterm=reverse ctermbg=NONE guibg=NONE
+"highlight Comment ctermfg=red ctermbg=NONE
+
+"highlight IncSearch term=reverse cterm=reverse gui=reverse
+"highlight Search term=reverse cterm=reverse gui=reverse
+"highlight CurSearch term=reverse cterm=reverse gui=reverse
+
+
+"------------------------------------------------
+" Columns
+
+
+" default 79
+set textwidth=72
+
+" Display the column
+set signcolumn=yes
+
+" Make it transparent
+highlight clear SignColumn
+
+" Makes the ~ signs in column invisible
+"highlight NonText guifg=bg
+
+"------------------------------------------------
+
+let mapleader=","
+
+" Safes tabs as defined in ts, but allows editing as defined here(sts):
+set softtabstop=2
+
+" Tab now indents spaces instead of tabs:
+set expandtab
+
+" Autoindenting on new line(based on filetype,lang,..)
+set smartindent
+
+" Number of spaces a tab counts mostly using '>>' or '<<'(vi mode):
+set shiftwidth=2
+
+" Round indent to multiple of sw:
+set shiftround
+
+" Tab at the start of a line inserts blanks according to sw:
+set smarttab
+
+"------------------------------------------------
+
+" Encoding
+set encoding=UTF-8
+
+" stop vim from silently messing with files that it shouldn't
+set nofixendofline
+
+"ascii friendly listchars
+"set listchars=space:*,trail:*,nbsp:*,extends:>,precedes:<,tab:\|>
+set list listchars=nbsp:¬,tab:»·,space:·,trail:·,extends:>
+
+"no fold etc
+set foldmethod=manual
+set nofoldenable
+set conceallevel=0
+
+"no bracket matching
+if has("eval") " vim-tiny detection
+  let g:loaded_matchparen=1
+endif
+set noshowmatch
+
+
+" More risky, but cleaner
+set nobackup
+set noswapfile
+set nowritebackup
+
+" Mark trailing spaces as errors:
+"match IncSearch '\s\+$'
+
+" Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
+set splitbelow splitright
+
+" Automatically deletes all trailing whitespace and newlines at end of file on save. & reset cursor position
+autocmd BufWritePre * let currPos = getpos(".")
+autocmd BufWritePre * %s/\s\+$//e
+autocmd BufWritePre * %s/\n\+\%$//e
+autocmd BufWritePre * cal cursor(currPos[1], currPos[2])
+
+" Start at last place you were editing:
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" Disables automatic commenting on newline:
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+
+"------------------------------------------------
+" Copy and past
+
+
+" Vim register:
+set clipboard=+unnamedplus
+
+" Prevents truncated yanks, deletes, etc.
+set viminfo='20,<1000,s1000
+
+" Use Y for yank to eol without the carriage return:
+nnoremap Y y$
+
+" When a file changed outside of Vim auto. read it again:
+"set autoread
+
+"------------------------------------------------
+" Searching and spellcheck
+
+set hlsearch
+set incsearch
+set linebreak
+set ignorecase
+set smartcase
+
+" Wrap around when searching:
+set wrapscan
+
+" Turns off highlighting on the bits of code that are changed,
+" so the line that is changed is highlighted
+" but the actual text that has changed stands out on the line and is readable.
+"if &diff
+"    highlight! link DiffText MatchParen
+"endif
+
+
+" Turn on default spell checking
+"set spell
+
+" Disable spellcapcheck
+set spc=
+
+
+"------------------------------------------------
+" Errors and bells
+
+" Disable visual bell:
+set t_vb=
+
+" For error messages only:
+set noerrorbells
+
+" Avoid most of the 'Hit Enter ...' messages:
+set shortmess=aoOtTI
+
+" Stop complaints about switching buffer with changes:
+set hidden
+
+"------------------------------------------------
+" History and completions
+
+" Command history:
+set history=100
+
+set wildmenu
+set wildmode=longest:full,full
+set wildoptions=pum
+
+"------------------------------------------------
+" Mouse, screen and key settings
+
+" Enable mouse:
+"set mouse=a
+
+" Faster scrolling:
+set ttyfast
+
+" Faster macros - screen will not be redrawn
+" while exec macros,registers,commands that havent been typed.
+" Also, updating the window title is postponed
+set lazyredraw
+
+" Center the cursor always on the screen:
+set scrolloff=999
+
+" Behavior when a mapped key sequence has been received(ie. jk for ESC etc.):
+"set notimeout
+"set ttimeout
+"set ttimeoutlen=10
+"set timeoutlen=500
+
+
+"------------------------------------------------
+
+" hardcoded
+nmap <leader>. :w! \| %!gcc mainfile.c -lm -o mainfile && ./mainfile<CR><CR>
+
+"exec all :%!sh
+map <leader>u :w! \| %!sh<CR><CR>
+"exec and insert at cursor location :r !cmd
+"nmap <leader>. :r !
+
+" Compile document, be it groff/LaTeX/markdown/etc
+" one extra <cr> as a workaround to supress 'press enter or ..' message
+map <leader>, :w! \| !compiler "%:p"<CR><CR>
+
+" Open corresponding .pdf/.html or preview - extra <CR> to supress 'press enter or ..' message
+map <leader>p :!opout "%:p"<CR><CR>
+
+"------------------------------------------------
+
+
+
+" Ensure files are read as what I want:
+let g:vimwiki_ext2syntax = {'.Rmd': 'markdown', '.rmd': 'markdown','.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
+map <leader>v :VimwikiIndex<CR>
+let g:vimwiki_list = [{'path': '~/.local/share/nvim/vimwiki', 'syntax': 'markdown', 'ext': '.md'}]
+autocmd BufRead,BufNewFile /tmp/calcurse*,~/.calcurse/notes/* set filetype=markdown
+autocmd BufRead,BufNewFile *.ms,*.me,*.mom,*.man set filetype=groff
+autocmd BufRead,BufNewFile *.tex set filetype=tex
+
+"------------------------------------------------
+" functions keys
+
+"map <F1> :set number!<CR> :set relativenumber!<CR>
+"nmap <F2> :call <SID>SynStack()<CR>
+"set pastetoggle=<F3>
+map <F9> :set list!<CR>
+set nolist
+"map <F5> :set cursorline!<CR>
+"map <F7> :set spell!<CR>
+"map <F12> :set fdm=indent<CR>
+
+"nmap <leader>2 :set paste<CR>i
+
+
+"------------------------------------------------
+" keys
+
+" make wrap line move default
+noremap j gj
+noremap k gk
+
+" vim surround
+nmap <leader>' ysiw'
+nmap <leader>" ysiw"
+
+" w!! to save with sudo
+ca w!! w !sudo tee >/dev/null "%"
+
+" Edit/Reload vimrc configuration file
+"nnoremap confe :e $HOME/.vimrc<CR>
+"nnoremap confr :source $HOME/.vimrc<CR>
+
+"----------------------------------------------
+" Just the formatoptions defaults, these are changed per filetype by
+" plugins. Most of the utility of all of this has been superceded by the use of
+" modern simplified pandoc for capturing knowledge source instead of
+" arbitrary raw text files.
+
+"set fo-=t   " don't auto-wrap text using text width
+"set fo-=c   " don't autowrap comments using textwidth with leader
+"set fo-=r   " don't auto-insert comment leader on enter in insert
+"set fo-=o   " don't auto-insert comment leader on o/O in normal
+"set fo+=q   " allow formatting of comments with gq
+"set fo-=w   " don't use trailing whitespace for paragraphs
+"set fo-=a   " disable auto-formatting of paragraph changes
+"set fo-=n   " don't recognized numbered lists
+"set fo+=j   " delete comment prefix when joining
+"set fo-=2   " don't use the indent of second paragraph line
+"set fo-=v   " don't use broken 'vi-compatible auto-wrapping'
+"set fo-=b   " don't use broken 'vi-compatible auto-wrapping'
+"set fo+=l   " long lines not broken in insert mode
+"set fo+=m   " multi-byte character line break support
+"set fo+=M   " don't add space before or after multi-byte char
+"set fo-=B   " don't add space between two multi-byte chars
+"set fo+=1   " don't break a line after a one-letter word
+
+"------------------------------------------------
