@@ -1,0 +1,138 @@
+# If you chose to add the intelligent search to ~/.inputrc,
+# also add the following line at the beginning of the file
+# to avoid strange behavior.
+# https://wiki.archlinux.org/title/Readline
+
+$include /etc/inputrc
+
+# Use vi style editing as readline default instead of emacs
+set editing-mode vi
+
+#$if mode=vi
+#set keymap vi-command
+# In vi-command mode
+#Control-l: clear-screen
+## In vi-insert mode
+#set keymap vi-command
+#Control-l: clear-screen
+#$endif
+
+# Intelligent history search cf. top of file.
+#"\e[A": history-search-backward
+#"\e[B": history-search-forward
+
+# No bell on tab-completion
+set bell-style none
+#set enable-bracketed-paste on
+
+set keymap vi
+
+# Allow UTF-8 input/output, instead of showing unicodes $'|0123|0456'
+#set input-meta on
+#set output-meta on
+#set convert-meta off
+
+# set meta-flag on
+
+# Display the comman and insert modes by putting:
+# either (ins) or (cmd) in front of the prompt.
+#set show-mode-in-prompt on
+
+
+# Use \1 and \2 escapes to begin/end sequences of non-printing characters
+# \e lets readline ignore the fact that [ is an escape char.
+
+# Change the default (ins),(cmd) with other symboles (use "" for token)
+#set vi-ins-mode-string "\1<--INSERT-->\2"
+#set vi-cmd-mode-string "\1<--NORMAL-->\2"
+
+# Or add color to the text with escape sequences (like green ins, red cmd)
+#set vi-ins-mode-string "\1\e[1;32m\2(INS)\1\e[0m\2"
+#set vi-cmd-mode-string "\1\e[1;31m\2(CMD)\1\e[0m\2"
+#set vi-ins-mode-string "\1 $ \2"
+#set vi-cmd-mode-string "\1 / \2"
+
+
+# Or change the cursor type when switching modes.
+# cursor appearance is cotrolled by an esc-seq
+# <ESC>[?1;2;3c where 1,2,3 are parameters
+#$if term=linux
+#	set vi-ins-mode-string \1\e[?0c\2
+#	set vi-cmd-mode-string \1\e[?8c\2
+#$else
+#	set vi-ins-mode-string \1\e[6 q\2
+#	set vi-cmd-mode-string \1\e[2 q\2
+#$endif
+
+## Completion
+
+# Make completion case-insensitiv
+set completion-ignore-case on
+
+# Show all matches if multiple cases are possible
+set show-all-if-ambiguous on
+
+# Add a trailing slash if autocompleting symlinks to directory
+set mark-symlinked-directories on
+
+# Dont autocomplete hidden files unless already typed a dot
+#set match-hidden-files off
+
+# Show all autocomplete results at once
+set page-completions off
+
+# Amount of possible completions before asking
+set completion-query-items 200
+
+# ONLY bash 4 Autocompletion also includes symboles after the cursor.
+# "~/src/mozil" with cursor on "z" will complete correctly to
+# "~/src/mozilla" instead of "~/src/mozillail"
+#set skip-completion-text on
+
+
+# Color files by type
+# May cause completion text to blink in some terminals
+#set colored-stats on
+
+# Append char to indicate type (like ls -F)
+#set visible-stats on
+
+# Mark symlinked directories
+#set mark-symlinked-directories on
+
+# Color the common prefix
+#set colored-completion-prefix on
+
+# Color the common prefix in menu-complete
+#set menu-complete-display-prefix on
+
+
+## Other modes
+#$if mode=emacs
+
+# for linux console and RH/Debian xterm
+#"\e[1~": beginning-of-line
+#"\e[4~": end-of-line
+#"\e[5~": beginning-of-history
+#"\e[6~": end-of-history
+#"\e[7~": beginning-of-line
+#"\e[3~": delete-char
+#"\e[2~": quoted-insert
+#"\e[5C": forward-word
+#"\e[5D": backward-word
+#"\e\e[C": forward-word
+#"\e\e[D": backward-word
+#"\e[1;5C": forward-word
+#"\e[1;5D": backward-word
+
+# for rxvt
+#"\e[8~": end-of-line
+
+# for non RH/Debian xterm, can't hurt for RH/DEbian xterm
+#"\eOH": beginning-of-line
+#"\eOF": end-of-line
+
+# for freebsd console
+#"\e[H": beginning-of-line
+#"\e[F": end-of-line
+#$endif

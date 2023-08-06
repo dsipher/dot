@@ -1,0 +1,90 @@
+## Partion disk (UEFI GPT -> ESP, efi system partition ca 512M)
+fdisk /dev/sda
+
+## Format partitions
+mkfs.ext4 /dev/sda2
+mkfs.fat -F 32 /dev/sda1
+
+
+##
+mount /dev/sda /mnt
+mkdir /mnt/home
+mount /dev/sda3 /mnt/home
+mkdir -p /mnt/boot/efi
+mount /dev/sda1 /mnt/boot/efi
+
+#Package installation
+
+#Move mirrors up or reflector
+vim /etc/pacman.d/mirrorlist
+
+##
+pacstrap -K /mnt base base-devel linux linux-firmware vim grub
+os-prober efibootmgr intel-ucode
+
+##
+genfstab -U /mnt >> /mnt/etc/fstab
+
+##
+arch-chroot /mnt
+
+#Timezone
+ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
+
+## sync system to hwclock
+hwclock --systohc
+
+#Encodings
+## /etc/locale.gen
+en_US.UTF-8 UTF-8
+en_US ISO-8859-1
+
+##
+locale-gen
+
+## /etc/locale.conf
+export LANG="en_US.UTF-8"
+export LC_COLLATE="C"
+
+#Bootloader
+## BIOS:
+grub-install --recheck /dev/sda
+## UEFI
+grub-install --target=x86_64-efi --efi-directory=/boot/efi
+--bootloader-id=grub
+
+#Generate config
+grub-mkconfig -o /boot/grub/grub.cfg
+
+#Sys settings
+## /etc/hostname
+## /etc/hosts
+127.0.0.1 localhost
+::1 localhost
+127.0.1.1 hostname.localdomain hostname
+
+#Network
+## /etc/systemd/network/20-wired.network
+[Match]
+Name=en*
+
+[Network]
+DHCP=yes
+
+#Rootpw
+passwd
+
+#User
+## Note: chown -R user:grp * recursive all
+adduser -m username
+passwd username
+gpasswd -a username wheel
+
+##
+systemctl enable systemd-networkd.service
+systemctl enable systemd-resolved.service
+
+#Done
+exit
+umount -R /mnt
+reboot

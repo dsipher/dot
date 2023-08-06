@@ -1,0 +1,10 @@
+#!/bin/sh
+
+
+id=$(xsetwacom list devices | grep -i wacom | awk '/STYLUS/{print $9}')
+#echo "$id"
+
+#xsetwacom list devices
+xsetwacom set "$id" ResetArea
+xsetwacom set "$id" Area 11266 8876 17513 12806
+xsetwacom set "$id" Button 2 "key ctrl z"
